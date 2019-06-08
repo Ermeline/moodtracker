@@ -7,3 +7,4 @@ class MoodEntry {
         this.behaviour = behaviour;
     }
 }
+export default MoodEntry;
