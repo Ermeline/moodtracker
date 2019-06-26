@@ -16,6 +16,7 @@ const initialState = {
     feeling: [
         {
             id: uuid(),
+            date:'1990-04-15',
             feel: 'traurig',
             situation: 'allein Zuhause',
             need: 'meine Freundin',
@@ -25,15 +26,25 @@ const initialState = {
     ]
 }
 
-//Button-Funktion im Allgemeinen (Löschen, Erstellen, auflisten)
+
+    //Button-Funktion im Allgemeinen (Löschen, Erstellen, auflisten)
 function App(state = initialState, action) {
     switch (action.type) {
         case CREATE_ELEM: {
-            const newFeeling = [...state.feeling, {id: action.payload.id, feel: action.payload.feel, situation: action.payload.situation, need: action.payload.need, behavior: action.payload.behavior}]
+            const newFeeling = [...state.feeling, {id: action.payload.id, date: action.payload.date, feel: action.payload.feel, situation: action.payload.situation, need: action.payload.need, behavior: action.payload.behavior}]
             return {...state, feeling: newFeeling}
         }
-        /*case EDIT_ELEM:{
+        /*case EDIT_ELEM: {
             const id = action.payload
+            const newFeeling = [...state.feeling, {id: action.payload.id, date: action.payload.date, feel: action.payload.feel, situation: action.payload.situation, need: action.payload.need, behavior: action.payload.behavior}]
+            return {...state, feeling: newFeeling}
+
+            for (let elem of state.feeling) {
+                if (elem.id === id) {
+                    newFeeling.push(elem)
+                }
+            }
+            return {...state, feeling: newFeeling}
 
         }*/
         case DELETE_ELEM: {
@@ -55,17 +66,24 @@ function App(state = initialState, action) {
 //ButtonDefinition und Ausgabe
 @connect()
 class Elem extends React.Component {
-    deleteHandler = () => {
+
+    editFeeling = () => {
+        this.props.dispatch({type: EDIT_ELEM, payload: this.props.id})
+    }
+
+    deleteFeeling = () => {
         this.props.dispatch({type: DELETE_ELEM, payload: this.props.id})
     }
 
     render() {
         return <div>
-            {this.props.feel}
-            {this.props.situation}
-            {this.props.need}
-            {this.props.behavior}
-            <button onClick={this.deleteHandler}>Gefühl verdrängen</button>
+            Datum: {this.props.date}
+            Gefühl: {this.props.feel}
+            Situation: {this.props.situation}
+            Need: {this.props.need}
+            Verhalten: {this.props.behavior}
+            /*<button onClick={this.editFeeling}>Gefühl bearbeiten</button>*/
+            <button onClick={this.deleteFeeling}>Gefühl verdrängen</button>
         </div>
     }
 }
@@ -80,7 +98,7 @@ function connectfeelingTofeelingComponent(state) {
 class Feeling extends React.Component {
     render() {
         const feeling = this.props.feeling
-        const feelingUI = feeling.map(elem => <Elem key={elem.id} id={elem.id} feel={elem.feel} situation={elem.situation} need={elem.need} behavior={elem.behavior}/>)
+        const feelingUI = feeling.map(elem => <Elem key={elem.id} id={elem.id} date={elem.date} feel={elem.feel} situation={elem.situation} need={elem.need} behavior={elem.behavior}/>)
 
         return <div>
             {feelingUI}
@@ -94,33 +112,37 @@ class CreateElem extends React.Component {
     constructor() {
         super()
 
+        this.dateRef = React.createRef()
         this.feelRef = React.createRef()
         this.situationRef = React.createRef()
         this.needRef = React.createRef()
         this.behaviorRef = React.createRef()
-
-
     }
 
     handleCreate = () => {
+        const date = this.dateRef.current.value;
         const feel = this.feelRef.current.value;
         const situation = this.situationRef.current.value;
         const need = this.needRef.current.value;
         const behavior = this.behaviorRef.current.value
 
-        this.props.dispatch({type: CREATE_ELEM, payload: {feel, situation, need, behavior, id: uuid()}})
+        this.props.dispatch({type: CREATE_ELEM, payload: {date, feel, situation, need, behavior, id: uuid()}})
     }
 
     render() {
         return <div>
-            <input ref={this.feelRef} type="text" placeholder="Wie fühlst du dich?"/>
-            <input ref={this.situationRef} type="text" placeholder="Was ist passiert?"/>
-            <input ref={this.needRef} type="text" placeholder="Was brauchst du?"/>
-            <input ref={this.behaviorRef} type="text" placeholder="Was machst du um dein Need zu bekommen?"/>
+            Datum: <input ref={this.dateRef} type="date" placeholder="Datum"/>
+            Gefühl: <input ref={this.feelRef} type="text" placeholder="Wie fühlst du dich?"/>
+            Situation: <input ref={this.situationRef} type="text" placeholder="Was ist passiert?"/>
+            Need: <input ref={this.needRef} type="text" placeholder="Was brauchst du?"/>
+            Verhalten: <input ref={this.behaviorRef} type="text" placeholder="Was machst du um dein Need zu bekommen?"/>
             <button onClick={this.handleCreate}>Gefühlswelt erweitern</button>
         </div>
     }
 }
+
+
+
 //Zwischenspeicher der Inhalte, also Auflistung
 const store = createStore(App, composeWithDevTools(applyMiddleware(thunk)))
 
