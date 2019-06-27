@@ -27,7 +27,7 @@ const initialState = {
 }
 
 // nur als Vorschlag, für mehr habe ich aktuell keine Zeit
-function getElementById(fellingArray, id) {
+function getFeelingById(fellingArray, id) {
     for (const feeling of fellingArray) {
         if(feeling.id == id) {
             return feeling
