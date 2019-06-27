@@ -67,9 +67,9 @@ function App(state = initialState, action) {
 @connect()
 class Elem extends React.Component {
 
-    editFeeling = () => {
+    /*editFeeling = () => {
         this.props.dispatch({type: EDIT_ELEM, payload: this.props.id})
-    }
+    }*/
 
     deleteFeeling = () => {
         this.props.dispatch({type: DELETE_ELEM, payload: this.props.id})
@@ -140,7 +140,6 @@ class CreateElem extends React.Component {
         </div>
     }
 }
-
 
 
 //Zwischenspeicher der Inhalte, also Auflistung
